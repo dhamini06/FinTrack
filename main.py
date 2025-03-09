@@ -83,7 +83,6 @@ df = load_data()
 
 # Input section
 st.header("📝 Add New Expense")
-
 with st.form("expense_form"):
     col1, col2, col3 = st.columns(3)
 
@@ -93,7 +92,7 @@ with st.form("expense_form"):
     with col2:
         category = st.selectbox(
             "Category",
-            ["Education", "Food", "Housing", "Transportation",
+            ["Education", "Food", "Housing", "Transportation", 
              "Entertainment", "Utilities", "Shopping", "Other"]
         )
 
@@ -103,35 +102,30 @@ with st.form("expense_form"):
     description = st.text_input("Description")
     submitted = st.form_submit_button("Add Expense")
 
-# ✅ Ensure this part is **outside** the `with st.form()` block
-if submitted and amount > 0:
-    # Update balance
-    st.session_state.balance -= amount
+    if submitted and amount > 0:
+        try:
+            # Update balance
+            st.session_state.balance -= amount
 
-    new_expense = pd.DataFrame([{
-        'Date': date,
-        'Amount': amount,
-        'Category': category,
-        'Description': description,
-        'Currency': st.session_state.currency
-    }])
+            new_expense = {
+                'Date': date,
+                'Amount': amount,
+                'Category': category,
+                'Description': description,
+                'Currency': st.session_state.currency
+            }
 
-    # Load the latest data and add the new expense
-    df = load_data()
-    df = pd.concat([df, new_expense], ignore_index=True)
-    save_data(df)
+            # Add new expense to dataframe
+            df = pd.concat([df, pd.DataFrame([new_expense])], ignore_index=True)
+            save_data(df)
 
-    # Show success message
-    st.success("Expense added successfully! ✅")
+            # Success message
+            st.success("✅ Expense added successfully!")
 
-    # ✅ Use session state to trigger refresh
-    st.session_state.expense_added = True
-
-# ✅ This must be **outside** the `if submitted` block
-if "expense_added" in st.session_state and st.session_state.expense_added:
-    st.session_state.expense_added = False
-    st.experimental_rerun()
-
+            # Clear form (using a rerun)
+            st.experimental_rerun()
+        except Exception as e:
+            st.error(f"Error adding expense: {str(e)}")
 
 # Dashboard
 st.header("📊 Expense Dashboard")
