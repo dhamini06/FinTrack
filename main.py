@@ -103,19 +103,27 @@ with st.form("expense_form"):
     submitted = st.form_submit_button("Add Expense")
 
     if submitted and amount > 0:
-        # Update balance
-        st.session_state.balance -= amount
+     # Update balance
+     st.session_state.balance -= amount
 
-        new_expense = {
-            'Date': date,
-            'Amount': amount,
-            'Category': category,
-            'Description': description,
-            'Currency': st.session_state.currency
-        }
-        df = pd.concat([df, pd.DataFrame([new_expense])], ignore_index=True)
-        save_data(df)
-        st.success("Expense added successfully!")
+     new_expense = pd.DataFrame([{
+         'Date': date,
+         'Amount': amount,
+         'Category': category,
+         'Description': description,
+         'Currency': st.session_state.currency
+     }])
+
+     # Load the latest data and add the new expense
+     df = load_data()
+     df = pd.concat([df, new_expense], ignore_index=True)
+     save_data(df)
+
+     st.success("Expense added successfully! ✅")
+
+     # 🔄 **Force Streamlit to refresh the UI**
+     st.experimental_rerun()
+
 
 # Dashboard
 st.header("📊 Expense Dashboard")
