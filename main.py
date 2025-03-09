@@ -102,27 +102,29 @@ with st.form("expense_form"):
     description = st.text_input("Description")
     submitted = st.form_submit_button("Add Expense")
 
-    if submitted and amount > 0:
-     # Update balance
-     st.session_state.balance -= amount
+  if submitted and amount > 0:
+    # Update balance
+    st.session_state.balance -= amount
 
-     new_expense = pd.DataFrame([{
-         'Date': date,
-         'Amount': amount,
-         'Category': category,
-         'Description': description,
-         'Currency': st.session_state.currency
-     }])
+    new_expense = pd.DataFrame([{
+        'Date': date,
+        'Amount': amount,
+        'Category': category,
+        'Description': description,
+        'Currency': st.session_state.currency
+    }])
 
-     # Load the latest data and add the new expense
-     df = load_data()
-     df = pd.concat([df, new_expense], ignore_index=True)
-     save_data(df)
+    # Load the latest data and add the new expense
+    df = load_data()
+    df = pd.concat([df, new_expense], ignore_index=True)
+    save_data(df)
 
-     st.success("Expense added successfully! ✅")
+    # Show success message
+    st.success("Expense added successfully! ✅")
 
-     # 🔄 **Force Streamlit to refresh the UI**
-     st.experimental_rerun()
+    # ⚠️ Streamlit does NOT allow `st.experimental_rerun()` inside the form
+    # Workaround: Use `st.session_state` to trigger a refresh
+    st.session_state.expense_added = True
 
 
 # Dashboard
