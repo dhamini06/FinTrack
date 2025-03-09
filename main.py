@@ -102,7 +102,29 @@ with st.form("expense_form"):
     description = st.text_input("Description")
     submitted = st.form_submit_button("Add Expense")
 
-  if submitted and amount > 0:
+  st.header("📝 Add New Expense")
+
+with st.form("expense_form"):
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        amount = st.number_input(f"Amount ({symbol})", min_value=0.0, step=0.01)
+
+    with col2:
+        category = st.selectbox(
+            "Category",
+            ["Education", "Food", "Housing", "Transportation",
+             "Entertainment", "Utilities", "Shopping", "Other"]
+        )
+
+    with col3:
+        date = st.date_input("Date", datetime.now())
+
+    description = st.text_input("Description")
+    submitted = st.form_submit_button("Add Expense")
+
+# ✅ Make sure this part is at the same indentation level as `with st.form()`
+if submitted and amount > 0:
     # Update balance
     st.session_state.balance -= amount
 
@@ -122,12 +144,14 @@ with st.form("expense_form"):
     # Show success message
     st.success("Expense added successfully! ✅")
 
-    # ⚠️ Streamlit does NOT allow `st.experimental_rerun()` inside the form
-    # Workaround: Use `st.session_state` to trigger a refresh
+    # Use session state to trigger refresh instead of st.experimental_rerun()
     st.session_state.expense_added = True
-      if 'expense_added' in st.session_state and st.session_state.expense_added:
+
+# ✅ This should be at the **same indentation level** as `st.header()`
+if 'expense_added' in st.session_state and st.session_state.expense_added:
     st.session_state.expense_added = False
     st.experimental_rerun()
+
 # Dashboard
 st.header("📊 Expense Dashboard")
 
