@@ -125,8 +125,9 @@ with st.form("expense_form"):
     # ⚠️ Streamlit does NOT allow `st.experimental_rerun()` inside the form
     # Workaround: Use `st.session_state` to trigger a refresh
     st.session_state.expense_added = True
-
-
+      if 'expense_added' in st.session_state and st.session_state.expense_added:
+    st.session_state.expense_added = False
+    st.experimental_rerun()
 # Dashboard
 st.header("📊 Expense Dashboard")
 
