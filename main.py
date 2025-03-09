@@ -83,26 +83,6 @@ df = load_data()
 
 # Input section
 st.header("📝 Add New Expense")
-with st.form("expense_form"):
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        amount = st.number_input(f"Amount ({symbol})", min_value=0.0, step=0.01)
-
-    with col2:
-        category = st.selectbox(
-            "Category",
-            ["Education", "Food", "Housing", "Transportation", 
-             "Entertainment", "Utilities", "Shopping", "Other"]
-        )
-
-    with col3:
-        date = st.date_input("Date", datetime.now())
-
-    description = st.text_input("Description")
-    submitted = st.form_submit_button("Add Expense")
-
-  st.header("📝 Add New Expense")
 
 with st.form("expense_form"):
     col1, col2, col3 = st.columns(3)
@@ -123,7 +103,7 @@ with st.form("expense_form"):
     description = st.text_input("Description")
     submitted = st.form_submit_button("Add Expense")
 
-# ✅ Make sure this part is at the same indentation level as `with st.form()`
+# ✅ Ensure this part is **outside** the `with st.form()` block
 if submitted and amount > 0:
     # Update balance
     st.session_state.balance -= amount
@@ -144,13 +124,14 @@ if submitted and amount > 0:
     # Show success message
     st.success("Expense added successfully! ✅")
 
-    # Use session state to trigger refresh instead of st.experimental_rerun()
+    # ✅ Use session state to trigger refresh
     st.session_state.expense_added = True
 
-# ✅ This should be at the **same indentation level** as `st.header()`
-if 'expense_added' in st.session_state and st.session_state.expense_added:
+# ✅ This must be **outside** the `if submitted` block
+if "expense_added" in st.session_state and st.session_state.expense_added:
     st.session_state.expense_added = False
     st.experimental_rerun()
+
 
 # Dashboard
 st.header("📊 Expense Dashboard")
